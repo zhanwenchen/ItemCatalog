@@ -37,7 +37,7 @@
 			</a>
 			<a href="{{url_for('newItem', category_id = category.id )}}">
 				<button class="btn btn-default" id="new-item-item">
-					<span class="glyphicon glyphicon-glass" aria-hidden="true"></span>Add Menu Item
+					<span class="glyphicon glyphicon-glass" aria-hidden="true"></span>Add Item
 				</button>
 			</a>
 						<a href="{{url_for('deletecategory', category_id = category.id )}}">
@@ -52,24 +52,8 @@
 	{% if items !=[] %}
 		<div class="row">
 			<div class="col-md-1"></div>
-			<div class="col-md-3">
-				<h2>Appetizers</h2>
+			<div class="col-md-10">
 					{% for i in items %}
-						{% if i.course == 'Appetizer' %}
-							<div class="item-item">
-								<h3>{{i.name}}</h3>
-								<p>{{i.description}}</p>
-								<p class="item-price">{{i.price}}</p>
-								<a href='{{url_for('editItem', category_id = category.id, item_id=i.id ) }}'>Edit</a> |
-								<a href='{{url_for('deleteItem', category_id = category.id, item_id=i.id ) }}'>Delete</a>
-							</div>
-						{% endif %}
-					{% endfor %}
-			</div>
-			<div class="col-md-4">
-				<h2>Entrees</h2>
-					{% for i in items %}
-						{% if i.course == 'Entree' %}
 						<div class="item-item">
 							<h3>{{i.name}}</h3>
 							<p>{{i.description}}</p>
@@ -77,33 +61,6 @@
 							<a href='{{url_for('editItem', category_id = category.id, item_id=i.id ) }}'>Edit</a> |
 							<a href='{{url_for('deleteItem', category_id = category.id, item_id=i.id ) }}'>Delete</a>
 						</div>
-						{% endif %}
-					{% endfor %}
-			</div>
-			<div class="col-md-3">
-				<h2>Desserts</h2>
-					{% for i in items %}
-						{% if i.course == 'Dessert' %}
-						<div class="item-item">
-							<h3>{{i.name}}</h3>
-							<p>{{i.description}}</p>
-							<p class="item-price">{{i.price}}</p>
-							<a href='{{url_for('editItem', category_id = category.id, item_id=i.id ) }}'>Edit</a> |
-							<a href='{{url_for('deleteItem', category_id = category.id, item_id=i.id ) }}'>Delete</a>
-						</div>
-						{% endif %}
-					{% endfor %}
-				<h2>Beverages</h2>
-					{% for i in items %}
-						{% if i.course == 'Beverage' %}
-						<div class="item-item">
-							<h3>{{i.name}}</h3>
-							<p>{{i.description}}</p>
-							<p class="item-price">{{i.price}}</p>
-							<a href='{{url_for('editItem', category_id = category.id, item_id=i.id ) }}'>Edit</a> |
-							<a href='{{url_for('deleteItem', category_id = category.id, item_id=i.id ) }}'>Delete</a>
-						</div>
-						{% endif %}
 					{% endfor %}
 			</div>
 			<div class="col-md-1"></div>
