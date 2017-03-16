@@ -320,14 +320,15 @@ def newItem(category_id):
         return redirect('/login')
     category = session.query(Category).filter_by(id=category_id).one()
     if request.method == 'POST':
-        newItem = Item(name=request.form['name'], description=request.form[
-                           'description'], price=request.form['price'], course=request.form['course'], category_id=category_id)
+        newItem = Item(name=request.form['name'], \
+                       description=request.form['description'], \
+                       category_id=category_id)
         session.add(newItem)
         session.commit()
         flash('New Menu %s Item Successfully Created' % (newItem.name))
         return redirect(url_for('showItems', category_id=category_id))
     else:
-        return render_template('newitem.html', category_id=category_id)
+        return render_template('newItem.html', category_id=category_id)
 
 # Edit a item
 @app.route('/category/<int:category_id>/item/<int:item_id>/edit', methods=['GET', 'POST'])
@@ -341,10 +342,6 @@ def editItem(category_id, item_id):
             editedItem.name = request.form['name']
         if request.form['description']:
             editedItem.description = request.form['description']
-        if request.form['price']:
-            editedItem.price = request.form['price']
-        if request.form['course']:
-            editedItem.course = request.form['course']
         session.add(editedItem)
         session.commit()
         flash('Item Successfully Edited')
@@ -353,7 +350,7 @@ def editItem(category_id, item_id):
         return render_template('edititem.html', category_id=category_id, item_id=item_id, item=editedItem)
 
 
-# Delete a item item
+# Delete an item
 @app.route('/category/<int:category_id>/item/<int:item_id>/delete', methods=['GET', 'POST'])
 def deleteItem(category_id, item_id):
     if 'username' not in login_session:
@@ -366,7 +363,8 @@ def deleteItem(category_id, item_id):
         flash('Item Successfully Deleted')
         return redirect(url_for('showItems', category_id=category_id))
     else:
-        return render_template('deleteItem.html', item=itemToDelete)
+        # on GET
+        return render_template('deleteItem.html', item=itemToDelete, category_id=category_id)
 
 
 if __name__ == '__main__':
