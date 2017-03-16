@@ -97,7 +97,7 @@ item1 = Item(name = "Hooks", description = "Save your life", category = category
 session.add(item1)
 session.commit()
 
-#Menu for Auntie Ann's
+
 category7 = Category(name = "Foosball")
 
 session.add(category7)
@@ -109,7 +109,6 @@ item1 = Item(name = "Foosball Table", description = "Make your startup hot",
 session.add(item1)
 session.commit()
 
-#Menu for Cocina Y Amor
 category8 = Category(name = "Skating")
 
 session.add(category8)
@@ -121,7 +120,6 @@ item1 = Item(name = "Skating Shoes", description = "Feel better than flying", ca
 session.add(item1)
 session.commit()
 
-#Menu for Auntie Ann's
 category9 = Category(name = "Hockey")
 
 session.add(category9)

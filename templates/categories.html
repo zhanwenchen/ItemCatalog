@@ -46,7 +46,7 @@
 		<div class="col-md-6">
 			<p> Categories </p>
 			{% for category in categories %}
-				<a href = "{{url_for('showItems', category_id = category.id)}}">
+				<a href = "{{url_for('showSingleCategory', category_id = category.id)}}">
 					<div class="row">
 						<div class="col-md-1"></div>
 							<div class="col-md-10 category-list">
@@ -61,7 +61,7 @@
 		<div class="col-md-6">
 			<p>Latest Items</p>
 			{% for item in latestItems %}
-				<a href = "{{url_for('showItems', category_id = item.id)}}">
+				<a href = "{{url_for('showSingleItem', item_id = item.id)}}">
 					<div class="row">
 						<div class="col-md-1"></div>
 							<div class="col-md-10 category-list">
