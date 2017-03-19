@@ -5,7 +5,19 @@
 		</a>
 	</div>
 	<div class="col-md-6 text-right">
-					<p>Login Link will go Here </p>
+		<!-- if user exist, have picture with logout only -->
+		<!-- <p>Login Link will go Here </p> -->
+		{% if login_picture %}
+			<div>
+				<img src="{{login_picture}}" style = "vertical-align: middle; width: 150px; height: 150px; border-radius: 75px; -webkit-border-radius: 75px; -moz-border-radius: 75px;">
+				<br>
+				<p style="width: 150px; float: right; text-align:center;">
+					<a href="/gdisconnect">Logout</a>
+				<p>
+			</div>
+		{% else %}
+			<a href="/login">Login</a>
+		{% endif %}
 
 	</div>
 </div>
