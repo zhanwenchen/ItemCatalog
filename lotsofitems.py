@@ -25,12 +25,11 @@ category1 = Category(name = "Soccer")
 session.add(category1)
 session.commit()
 
-item1 = Item(name = "Soccer Ball", description = "with good bounce", category = category1)
+item1 = Item(name = "Soccer Ball", description = "with good bounce", category = category1, creator="phil.zhanwen.chen@gmail.com")
 session.add(item1)
 session.commit()
 
-item2 = Item(name = "Soccer Shoes", description = "with good grip",
-    category = category1)
+item2 = Item(name = "Soccer Shoes", description = "with good grip", category = category1, creator="phil.zhanwen.chen@gmail.com")
 session.add(item2)
 session.commit()
 
@@ -41,8 +40,7 @@ category2 = Category(name = "Basketball")
 session.add(category2)
 session.commit()
 
-item1 = Item(name = "Js", description = "every young dude's dream",
-    category = category2)
+item1 = Item(name = "Js", description = "every young dude's dream", category = category2, creator="phil.zhanwen.chen@gmail.com")
 
 session.add(item1)
 session.commit()
@@ -55,7 +53,7 @@ session.add(category3)
 session.commit()
 
 
-item1 = Item(name = "Baseball bat", description = "A bat", category = category3)
+item1 = Item(name = "Baseball bat", description = "A bat", category = category3, creator="phil.zhanwen.chen@gmail.com")
 
 session.add(item1)
 session.commit()
@@ -66,9 +64,7 @@ category4 = Category(name = "Frisbee")
 session.add(category4)
 session.commit()
 
-item1 = Item(name = "Frisbee", description =
-    "The most fun disk you can own",
-    category = category4)
+item1 = Item(name = "Frisbee", description = "The most fun disk you can own", category = category4, creator="phil.zhanwen.chen@gmail.com")
 
 session.add(item1)
 session.commit()
@@ -78,11 +74,11 @@ category5 = Category(name = "Snowboarding")
 session.add(category5)
 session.commit()
 
-item1 = Item(name = "Goggles", description = "", category = category5)
+item1 = Item(name = "Goggles", description = "", category = category5, creator="phil.zhanwen.chen@gmail.com")
 session.add(item1)
 session.commit()
 
-item2 = Item(name = "Snowboard", description = "", category = category5)
+item2 = Item(name = "Snowboard", description = "", category = category5, creator="phil.zhanwen.chen@gmail.com")
 session.add(item2)
 session.commit()
 
@@ -92,7 +88,7 @@ category6= Category(name = "Rock Climbing")
 session.add(category6)
 session.commit()
 
-item1 = Item(name = "Hooks", description = "Save your life", category = category6)
+item1 = Item(name = "Hooks", description = "Save your life", category = category6, creator="phil.zhanwen.chen@gmail.com")
 
 session.add(item1)
 session.commit()
@@ -103,8 +99,7 @@ category7 = Category(name = "Foosball")
 session.add(category7)
 session.commit()
 
-item1 = Item(name = "Foosball Table", description = "Make your startup hot",
-    category = category7)
+item1 = Item(name = "Foosball Table", description = "Make your startup hot", category = category7, creator="phil.zhanwen.chen@gmail.com")
 
 session.add(item1)
 session.commit()
@@ -115,7 +110,7 @@ session.add(category8)
 session.commit()
 
 
-item1 = Item(name = "Skating Shoes", description = "Feel better than flying", category = category8)
+item1 = Item(name = "Skating Shoes", description = "Feel better than flying", category = category8, creator="phil.zhanwen.chen@gmail.com")
 
 session.add(item1)
 session.commit()
@@ -125,7 +120,7 @@ category9 = Category(name = "Hockey")
 session.add(category9)
 session.commit()
 
-item1 = Item(name = "Hockey Stick", description = "Your ultimate weapon", category = category9)
+item1 = Item(name = "Hockey Stick", description = "Your ultimate weapon", category = category9, creator="phil.zhanwen.chen@gmail.com")
 
 session.add(item1)
 session.commit()

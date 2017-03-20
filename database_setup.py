@@ -22,8 +22,8 @@ class Category(Base):
 class Item(Base):
     __tablename__ = 'item'
 
-
-    name =Column(String(80), nullable = False)
+    creator = Column(String(80), nullable = False)
+    name = Column(String(80), nullable = False)
     id = Column(Integer, primary_key = True)
     description = Column(String(250))
     category_id = Column(Integer,ForeignKey('category.id'))
@@ -35,8 +35,9 @@ class Item(Base):
        """Return object data in easily serializeable format"""
        return {
            'name'         : self.name,
-           'description'         : self.description,
-           'id'         : self.id,
+           'description'  : self.description,
+           'id'           : self.id,
+           'creator'      : self.creator
        }
 
 

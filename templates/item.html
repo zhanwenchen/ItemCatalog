@@ -41,7 +41,7 @@
 					<span class="glyphicon glyphicon-glass" aria-hidden="true"></span>Add Item
 				</button>
 			</a>
-						<a href="{{url_for('deleteItem', item_id = item.category_id )}}">
+			<a href="{{url_for('deleteItem', item_id = item.category_id )}}">
 				<button class="btn btn-default delete" id="delete-category">
 					<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>Delete Category
 				</button>
@@ -57,8 +57,11 @@
 				<div class="item-item">
 					<h3>{{item.name}}</h3>
 					<p>{{item.description}}</p>
-					<a href='{{url_for('editItem', category_id = item.category_id, item_id=item.id ) }}'>Edit</a> |
-					<a href='{{url_for('deleteItem', category_id = item.category_id, item_id=item.id ) }}'>Delete</a>
+					{% if item.creator == user_email %}
+						<a href='{{url_for('editItem', category_id = item.category_id, item_id=item.id ) }}'>Edit</a> |
+						<a href='{{url_for('deleteItem', category_id = item.category_id, item_id=item.id ) }}'>Delete</a>
+					{% endif %}
+
 				</div>
 			</div>
 			<div class="col-md-1"></div>

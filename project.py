@@ -1,15 +1,6 @@
-## author: Zhanwen Chen
-
-## Tests
-
-## showAllCategories works
-## editCategory works
-## deleteCateogry works
-## Add item works
-## Edit item works
-## Delete item works
-
-NUM_OF_LATEST_ITEMS = 6
+# project.py
+# Udacity FSND ItemCatalog project
+# author: Zhanwen Chen
 
 from functools import wraps
 from flask import Flask, render_template, g, request, redirect, jsonify, \
@@ -20,12 +11,14 @@ from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, Item
 import random
 import string
-
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError, \
     AccessTokenCredentials
 import httplib2
 import json
 import requests
+import sys
+
+NUM_OF_LATEST_ITEMS = 6 # number of latest items to display
 
 app = Flask(__name__)
 
@@ -41,11 +34,13 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-import sys
 
+# Helpers
+# for Py3, use range instead of xrange
 if sys.version_info >= (3, 0):
     def xrange(*args, **kwargs):
         return iter(range(*args, **kwargs))
+
 
 def login_required(f):
     @wraps(f)
@@ -57,13 +52,20 @@ def login_required(f):
             return redirect('/login')
     return decorated_function
 
-# Create anti-forgery state token
+
+def get_pic():
+    return login_session['picture'] if 'picture' in login_session else None
+
+
+# Routes
 @app.route('/login')
 def showLogin():
+    # Create anti-forgery state token
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
     return render_template('login.html', STATE=state)
+
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
@@ -120,8 +122,8 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(
+            json.dumps('Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -145,22 +147,24 @@ def gconnect():
     output += '<h1>Welcome, '
     output += login_session['username']
     output += '!</h1>'
-    output += '<h1>\n\n\n!!!!!!!!!!!!!!!!!!!!!!\n %s \n!!!!!!!!!!!!!!!!!!!!!!!\n\n\n</h1>' % login_session
+    output += '<h1>\n\n %s \n\n</h1>' % login_session
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' " style = "width: 300px; height: 300px; border-radius: 150px; \
+        -webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
 
     return output
+
 
 @app.route('/gdisconnect')
 def gdisconnect():
     access_token = login_session['access_token']
     print 'In gdisconnect access token is %s' % access_token
     if access_token is None:
-    	response = make_response(json.dumps('Current user not connected.'), 401)
-    	response.headers['Content-Type'] = 'application/json'
-    	return response
+    	response = make_response(json.dumps('Current user not connected'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
     print("url is " + url)
     h = httplib2.Http()
@@ -168,23 +172,25 @@ def gdisconnect():
     print 'result is '
     print result
     if result['status'] == '200':
-    	del login_session['gplus_id']
-    	del login_session['username']
-    	del login_session['email']
-    	del login_session['picture']
-    	del login_session['access_token']
-    	response = make_response(json.dumps('Successfully disconnected.'), 200)
-    	response.headers['Content-Type'] = 'application/json'
-    	return response
+        del login_session['gplus_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+        del login_session['access_token']
+        response = make_response(json.dumps('Successfully disconnected.'), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
     else:
         del login_session['gplus_id']
-    	del login_session['username']
-    	del login_session['email']
-    	del login_session['picture']
-    	del login_session['access_token']
-    	response = make_response(json.dumps('Failed to revoke token for given user.', 400))
-    	response.headers['Content-Type'] = 'application/json'
-    	return response
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+        del login_session['access_token']
+        response = make_response(
+            json.dumps('Failed to revoke token for given user.', 400))
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
 
 # JSON APIs to view Category Information
 @app.route('/category/<int:category_id>/item/JSON')
@@ -193,6 +199,7 @@ def itemcatalogJSON(category_id):
     items = session.query(Item).filter_by(
         category_id=category_id).all()
     return jsonify(Items=[i.serialize for i in items])
+
 
 @app.route('/category/<int:category_id>/item/<int:item_id>/JSON')
 def itemJSON(category_id, item_id):
@@ -205,15 +212,16 @@ def categoriesJSON():
     categories = session.query(Category).all()
     return jsonify(categories=[r.serialize for r in categories])
 
+
 # Show all categories
 @app.route('/')
 def showAllCategories():
     categories = session.query(Category).order_by(asc(Category.name))
-    latestItems = session.query(Item).order_by(asc(Item.name)).limit(NUM_OF_LATEST_ITEMS)
-    return render_template('categories.html', \
-                            categories=categories, \
-                            latestItems=latestItems, \
-                            login_picture=login_session['picture'] if 'picture' in login_session else None)
+    latestItems = session.query(Item).order_by(asc(Item.name)).limit(
+        NUM_OF_LATEST_ITEMS)
+    return render_template('categories.html', categories=categories,
+                            latestItems=latestItems, login_picture=get_pic())
+
 
 # Show all of one category's items
 @app.route('/category/<int:category_id>/')
@@ -221,10 +229,11 @@ def showSingleCategory(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
     items = session.query(Item).filter_by(
         category_id=category_id).all()
-    return render_template('items.html', \
-        items=items, \
-        category=category, \
-        login_picture=login_session['picture'] if 'picture' in login_session else None)
+    return render_template('items.html', items=items, category=category,
+                                login_picture=get_pic(),
+                                user_email=login_session['email'] \
+                                    if 'email' in login_session else None)
+
 
 # Create a new category
 @login_required
@@ -237,8 +246,8 @@ def newCategory():
         session.commit()
         return redirect(url_for('showAllCategories'))
     else:
-        return render_template('newCategory.html', \
-            login_picture=login_session['picture'] if 'picture' in login_session else None)
+        return render_template('newCategory.html', login_picture=get_pic())
+
 
 # Edit a category
 @login_required
@@ -249,13 +258,14 @@ def editCategory(category_id):
         if request.form['name']:
             categoryToEdit.name = request.form['name']
             flash('Successfully Edited Category %s' % categoryToEdit.name)
-            return redirect(url_for('showSingleCategory', \
-                category_id=categoryToEdit.id, \
-                login_picture=login_session['picture'] if 'picture' in login_session else None))
+            return redirect(url_for('showSingleCategory',
+                                        category_id=categoryToEdit.id,
+                                        login_picture=get_pic()))
     else:
         return render_template('editCategory.html',
-            category=categoryToEdit, \
-            login_picture=login_session['picture'] if 'picture' in login_session else None)
+                                    category=categoryToEdit,
+                                    login_picture=get_pic())
+
 
 # Delete a category
 @login_required
@@ -264,22 +274,25 @@ def deleteCategory(category_id):
     categoryToDelete = session.query(Category).filter_by(id=category_id).one()
     if request.method == 'POST':
         session.delete(categoryToDelete)
-        flash('%s Successfully Deleted' % categoryToDelete.name)
+        flash('%s Successfully Deleted by %s' %
+            (categoryToDelete.name, login_session['email']))
         session.commit()
         return redirect(url_for('showAllCategories', category_id=category_id))
     else:
-        return render_template('deleteCategory.html', \
-            category=categoryToDelete, \
-            category_id=category_id, \
-            login_picture=login_session['picture'] if 'picture' in login_session else None)
+        return render_template('deleteCategory.html',
+                                category=categoryToDelete,
+                                category_id=category_id,
+                                login_picture=get_pic())
+
 
 # Show a single item
 @app.route('/item/<int:item_id>')
 def showSingleItem(item_id):
     item = session.query(Item).filter_by(id=item_id).one()
-    return render_template('item.html',
-        item=item, \
-        login_picture=login_session['picture'] if 'picture' in login_session else None)
+    return render_template('item.html', item=item, login_picture=get_pic(),
+                                user_email=login_session['email'] \
+                                    if 'email' in login_session else None)
+
 
 # Create a new item
 @login_required
@@ -287,25 +300,29 @@ def showSingleItem(item_id):
 def newItem(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
     if request.method == 'POST':
-        newItem = Item(name=request.form['name'], \
-                       description=request.form['description'], \
-                       category_id=category_id)
+        newItem = Item(name=request.form['name'],
+                       description=request.form['description'],
+                       category_id=category_id,
+                       creator=login_session['email'])
         session.add(newItem)
         session.commit()
-        flash('New Item %s Successfully Created' % (newItem.name))
+        flash('New Item %s Successfully Created by %s' %
+            (newItem.name, newItem.creator))
         return redirect(url_for('showSingleCategory', category_id=category_id))
     else:
-        return render_template('newItem.html', \
-            category_id=category_id, \
-            login_picture=login_session['picture'] if 'picture' in login_session else None)
+        return render_template('newItem.html', category_id=category_id,
+                                login_picture=get_pic())
+
 
 # Edit a item
-# @app.route('/category/<int:category_id>/item/<int:item_id>/edit', methods=['GET', 'POST'])
 @login_required
 @app.route('/item/<int:item_id>/edit', methods=['GET', 'POST'])
 def editItem(item_id):
     editedItem = session.query(Item).filter_by(id=item_id).one()
-    category = session.query(Category).filter_by(id=editedItem.category_id).one()
+    if editedItem.creator != login_session['email']:
+        flash('You cannot edit items not created by you')
+        return redirect(url_for('showSingleCategory',
+                                    category_id=itemToDelete.category_id))
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
@@ -314,35 +331,36 @@ def editItem(item_id):
         session.add(editedItem)
         session.commit()
         flash('Item Successfully Edited')
-        return redirect(url_for('showSingleCategory', \
-            category_id=editedItem.category_id))
+        return redirect(url_for('showSingleCategory',
+                                    category_id=editedItem.category_id))
     else:
-        return render_template('editItem.html', \
-            category_id=editedItem.category_id, \
-            item_id=item_id, \
-            item=editedItem, \
-            login_picture=login_session['picture'] if 'picture' in login_session else None)
+        return render_template('editItem.html',
+                                    category_id=editedItem.category_id,
+                                    item_id=item_id,
+                                    item=editedItem,
+                                    login_picture=get_pic())
+
 
 # Delete an item
-# @app.route('/category/<int:category_id>/item/<int:item_id>/delete', methods=['GET', 'POST'])
 @login_required
 @app.route('/item/<int:item_id>/delete', methods=['GET', 'POST'])
-# def deleteItem(category_id, item_id):
 def deleteItem(item_id):
-    # category = session.query(Category).filter_by(id=category_id).one()
     itemToDelete = session.query(Item).filter_by(id=item_id).one()
+    if itemToDelete.creator != login_session['email']:
+        flash('You cannot delete items not created by you')
+        return redirect(url_for('showSingleCategory',
+                                    category_id=itemToDelete.category_id))
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
         flash('Item Successfully Deleted')
-        # return redirect(url_for('showSingleCategory', category_id=category.id))
-        return redirect(url_for('showSingleCategory', category_id=itemToDelete.category_id))
+        return redirect(url_for('showSingleCategory',
+                                    category_id=itemToDelete.category_id))
     else:
         # on GET
-        # return render_template('deleteItem.html', item=itemToDelete, category_id=category_id)
-        return render_template('deleteItem.html', \
-            item=itemToDelete, \
-            login_picture=login_session['picture'] if 'picture' in login_session else None)
+        return render_template('deleteItem.html', item=itemToDelete,
+                                login_picture=get_pic())
+
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
