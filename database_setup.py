@@ -10,6 +10,7 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
+    items = relationship("Item", cascade="all, delete", backref="parent")
 
     @property
     def serialize(self):
@@ -22,12 +23,15 @@ class Category(Base):
 class Item(Base):
     __tablename__ = 'item'
 
-    creator = Column(String(80), nullable = False)
-    name = Column(String(80), nullable = False)
     id = Column(Integer, primary_key = True)
+    name = Column(String(80), nullable = False)
     description = Column(String(250))
-    category_id = Column(Integer,ForeignKey('category.id'))
-    category = relationship(Category)
+    # category_id = Column(Integer, ForeignKey('category.id'))
+    category_id = Column(Integer, ForeignKey(Category.id))
+    creator = Column(String(80), nullable = False)
+    # category = relationship("Category",
+    #     backref=backref("items", cascade="all, delete-orphan")
+    # )
 
 
     @property
