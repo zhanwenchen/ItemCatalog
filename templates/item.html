@@ -6,10 +6,14 @@
 	</div>
 	<div class="row banner item">
 		<div class="col-md-11 col-md-offset-1 padding-none">
-			<h1>{{ item.name }}
+			<h1>{{ item.name }} </h1>
 			<figure class="creator">
-				<img src="{{ url_for('static', filename='blank_user.gif') }}">
-				<figcaption>Item creator's name goes here</figcaption>
+				{% if login_picture %}
+					<img src="{{ login_picture }}">
+				{% else %}
+					<img src="{{ url_for('static', filename='blank_user.gif') }}">
+					<figcaption>Item creator's name goes here</figcaption>
+				{% endif %}
 			</figure>
 			</h1>
 		</div>

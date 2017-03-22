@@ -95,7 +95,7 @@ def gconnect():
     url = ('https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=%s'
            % access_token)
     h = httplib2.Http()
-    result = json.loads(h.request(url, 'GET')[1])
+    result = json.loads(h.request(url, 'GET')[1].decode("utf8"))
     # If there was an error in the access token info, abort.
     if result.get('error') is not None:
         response = make_response(json.dumps(result.get('error')), 500)
@@ -195,7 +195,7 @@ def gdisconnect():
 # JSON APIs to view Category Information
 @app.route('/category/<int:category_id>/item/JSON')
 def itemcatalogJSON(category_id):
-    category = session.query(Category).filter_by(id=category_id).one()
+    # category = session.query(Category).filter_by(id=category_id).one()
     items = session.query(Item).filter_by(
         category_id=category_id).all()
     return jsonify(Items=[i.serialize for i in items])
@@ -236,8 +236,8 @@ def showSingleCategory(category_id):
 
 
 # Create a new category
-@login_required
 @app.route('/category/new/', methods=['GET', 'POST'])
+@login_required
 def newCategory():
     if request.method == 'POST':
         newCategory = Category(name=request.form['name'])
@@ -250,8 +250,8 @@ def newCategory():
 
 
 # Edit a category
-@login_required
 @app.route('/category/<int:category_id>/edit/', methods=['GET', 'POST'])
+@login_required
 def editCategory(category_id):
     categoryToEdit = session.query(Category).filter_by(id=category_id).one()
     if request.method == 'POST':
@@ -268,8 +268,8 @@ def editCategory(category_id):
 
 
 # Delete a category
-@login_required
 @app.route('/category/<int:category_id>/delete/', methods=['GET', 'POST'])
+@login_required
 def deleteCategory(category_id):
     categoryToDelete = session.query(Category).filter_by(id=category_id).one()
     if request.method == 'POST':
@@ -295,10 +295,10 @@ def showSingleItem(item_id):
 
 
 # Create a new item
-@login_required
 @app.route('/category/<int:category_id>/item/new/', methods=['GET', 'POST'])
+@login_required
 def newItem(category_id):
-    category = session.query(Category).filter_by(id=category_id).one()
+    # category = session.query(Category).filter_by(id=category_id).one()
     if request.method == 'POST':
         newItem = Item(name=request.form['name'],
                        description=request.form['description'],
@@ -315,14 +315,14 @@ def newItem(category_id):
 
 
 # Edit a item
-@login_required
 @app.route('/item/<int:item_id>/edit', methods=['GET', 'POST'])
+@login_required
 def editItem(item_id):
     editedItem = session.query(Item).filter_by(id=item_id).one()
     if editedItem.creator != login_session['email']:
         flash('You cannot edit items not created by you')
         return redirect(url_for('showSingleCategory',
-                                    category_id=itemToDelete.category_id))
+                                    category_id=editedItem.category_id))
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
@@ -342,8 +342,8 @@ def editItem(item_id):
 
 
 # Delete an item
-@login_required
 @app.route('/item/<int:item_id>/delete', methods=['GET', 'POST'])
+@login_required
 def deleteItem(item_id):
     itemToDelete = session.query(Item).filter_by(id=item_id).one()
     if itemToDelete.creator != login_session['email']:
