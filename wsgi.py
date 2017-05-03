@@ -1,5 +1,5 @@
 import sys
 sys.path.insert(0, "/var/www/ItemCatalog")
 
-from app import app
+from project import app
 application = app
